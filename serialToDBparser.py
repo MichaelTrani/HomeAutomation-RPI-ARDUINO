@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import serial
 import psycopg2
 
@@ -42,7 +43,7 @@ while True:
             # Insert the data point into the database
             cur.execute(f"INSERT INTO sensor_data (date, cycle, temperature, humidity, light, magnetic, gas, noiselevel) VALUES (CURRENT_TIMESTAMP, %s, %s, %s, %s, %s, %s, %s)", (cycle, sensor_data['temperature'], sensor_data['humidity'], sensor_data['light'], sensor_data['magnetic'], sensor_data['gas'], sensor_data['noiselevel']))
             conn.commit()
-            
+
             # Reset the sensor data dictionary and cycle number
             sensor_data = {}
             cycle = None

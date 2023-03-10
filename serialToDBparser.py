@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 import serial
 import psycopg2
+import datetime
 
 # Connect to the database
 conn = psycopg2.connect(dbname='environmentsensors', user='arduino', password='arduino', host='localhost')
@@ -37,11 +37,16 @@ while True:
 
         # Add the data point to the dictionary
         sensor_data[name.lower().replace(' ', '')] = float(value)
+
         if len(sensor_data) == 6:
             print(sensor_data)
 
+            # Truncate the milliseconds of the timestamp to two decimal places
+            now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+
             # Insert the data point into the database
-            cur.execute(f"INSERT INTO sensor_data (date, cycle, temperature, humidity, light, magnetic, gas, noiselevel) VALUES (CURRENT_TIMESTAMP, %s, %s, %s, %s, %s, %s, %s)", (cycle, sensor_data['temperature'], sensor_data['humidity'], sensor_data['light'], sensor_data['magnetic'], sensor_data['gas'], sensor_data['noiselevel']))
+            cur.execute("INSERT INTO sensor_data (date, cycle, temperature, humidity, light, magnetic, gas, noiselevel) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                        (now, cycle, sensor_data.get('temperature', 0.0), sensor_data.get('humidity', 0.0), round(sensor_data.get('light', 0.0), 2), round(sensor_data.get('magnetic', 0.0), 2), round(sensor_data.get('gas', 0.0), 2), float(sensor_data.get('noiselevel', 0.0))))
             conn.commit()
 
             # Reset the sensor data dictionary and cycle number

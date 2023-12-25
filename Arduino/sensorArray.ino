@@ -20,5 +20,3 @@ void loop() {
   delay(timeInterval);  
   ++cycle;
 }
-
-

@@ -24,6 +24,7 @@
 #define Plant_3 A6
 #define Plant_4 A7
 
+#define Plant_Water_Point_0
 
 
 // Library builds
@@ -59,10 +60,9 @@ struct sensorArray {
       Serial.print(i);
       Serial.print(",");
       Serial.println(plantMoisture[i]);
+     
       int waterCheck = Serial.read(); 
-      //if(waterCheck){
-        //waterPump();
-      //}
+      waterPump(waterCheck, Plant_Water_Point_0)
 
     }
   }
